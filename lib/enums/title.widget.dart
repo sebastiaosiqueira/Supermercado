@@ -1,0 +1,1 @@
+  List<String> titles = <String>['Compras', 'Produtos', 'Supermercados'];

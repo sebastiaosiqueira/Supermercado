@@ -1,5 +1,7 @@
+
+
 class Supermercado {
-  late String id;
+  late int id;
   late String nome;
 
   Supermercado({required this.id, required this.nome});

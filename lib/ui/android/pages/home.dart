@@ -1,34 +1,51 @@
 import 'package:flutter/material.dart';
+import 'package:mercado/ui/android/pages/Produto/produto.page.list.dart';
+import 'package:mercado/widgtes/widget.tabview.produtos.dart';
 
-class Home extends StatefulWidget {
+class Home extends StatelessWidget {
   const Home({super.key});
-
   @override
-  State<Home> createState() => _Home();
-}
+  Widget build(BuildContext context) {
+    const String appTitle = 'Compras Supermercado';
 
-class _Home extends State<Home> {
-  @override
- Widget build(BuildContext context) {
-    return DefaultTabController(
-      initialIndex: 1,
-      length: 3,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Supermercado'),
-          bottom: const TabBar(
-            tabs: <Widget>[
-              Tab(icon: Icon(Icons.cloud_outlined)),
-              Tab(icon: Icon(Icons.beach_access_sharp)),
-              Tab(icon: Icon(Icons.brightness_5_sharp)),
-            ],
-          ),
-        ),
-        body: const TabBarView(
-          children: <Widget>[
-            Center(child: Text("It's cloudy here")),
-            Center(child: Text("It's rainy here")),
-            Center(child: Text("It's sunny here")),
+    return MaterialApp(
+      home: Scaffold(
+        body: Column(
+          children: [
+            Expanded(child: Center(child: TabProduto())),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                  tooltip: "Compras",
+                  iconSize: 60,
+                  icon: const Icon(Icons.paid),
+                   color: Colors.green,
+                  onPressed: () {},
+                ),
+                IconButton(
+                  tooltip: "Supermercados",
+                  iconSize: 60,
+                  icon: const Icon(Icons.store),
+                  color: Colors.blue,
+                  onPressed: () {},
+                ),
+                IconButton(
+  
+              tooltip: "Produtos",
+                  iconSize: 60,
+                    color: Colors.accents.first,
+                  icon: const Icon(Icons.shopping_cart),
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => ProdutoLista(),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
           ],
         ),
       ),
