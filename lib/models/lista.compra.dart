@@ -1,24 +1,35 @@
-import 'dart:nativewrappers/_internal/vm/lib/ffi_native_type_patch.dart';
-
-import 'package:mercado/models/compra.dart';
-import 'package:mercado/models/produto.dart';
-
 class ListaCompra {
-  late int id;
-  late Compra idcompra;
-  late Produto idproduto;
-  late int quantidade;
-  late Double valor;
-  late Double valortotal;
+  int? id;
+  int idProduto;
+  int quantidade;
+  double valor;
+  double total;
 
   ListaCompra({
-    required this.id,
-    required this.idcompra,
-    required this.idproduto,
+    this.id,
+    required this.idProduto,
     required this.quantidade,
     required this.valor,
-    required this.valortotal,
+    required this.total,
   });
 
- 
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'idproduto': idProduto,
+      'quantidade': quantidade,
+      'valor': valor,
+      'total': total,
+    };
+  }
+
+  factory ListaCompra.fromMap(Map<String, dynamic> map) {
+    return ListaCompra(
+      id: map['id'],
+      idProduto: map['idproduto'],
+      quantidade: map['quantidade'],
+      valor: (map['valor'] as num).toDouble(),
+      total: (map['total'] as num).toDouble(),
+    );
+  }
 }

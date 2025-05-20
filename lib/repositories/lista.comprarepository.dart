@@ -1,36 +1,34 @@
-import 'package:mercado/models/lista.compra.dart';
-import 'package:sqflite/sqflite.dart';
+import '../Database/databasehelper.dart';
+import '../models/lista.compra.dart';
 
 class ListaCompraRepository {
-  late Database _db;
-   Future<List<ListaCompra>> getAll() async {
-    var res = await _db.query("ListaCompra");
-    List<ListaCompra> list =
-        res.isNotEmpty ? res.map((c) => ListaCompra.fromJson(c)).toList() : [];
-    return list;
+  final dbHelper = DatabaseHelper();
+  final String tableName = 'lista_compras';
+
+  Future<int> insertListaCompra(ListaCompra listaCompra) async {
+    return await dbHelper.insert(tableName, listaCompra.toMap());
   }
 
-  newListaCompra(ListaCompra newListaCompra) async {
-    var res = await _db.insert("ListaCompra", newListaCompra.toJson());
-    return res;
+  Future<List<ListaCompra>> getAllListaCompras() async {
+    final List<Map<String, dynamic>> maps = await dbHelper.queryAll(tableName);
+    return List.generate(maps.length, (i) {
+      return ListaCompra.fromMap(maps[i]);
+    });
   }
 
-  getListaCompra(int id) async {
-    var res = await _db.query("ListaCompra", where: "id=?", whereArgs: [id]);
-    return res.isNotEmpty ? ListaCompra.fromJson(res.first) : Null;
+  Future<ListaCompra?> getListaCompra(int id) async {
+    final List<Map<String, dynamic>> result = await dbHelper.queryById(tableName, id);
+    if (result.isNotEmpty) {
+      return ListaCompra.fromMap(result.first);
+    }
+    return null;
   }
 
-  updateListaCompra(ListaCompra produto) async {
-    var res = await _db.update(
-      "ListaCompra",
-      produto.toJson(),
-      where: "id= ?",
-      whereArgs: [produto.id],
-    );
-    return res;
+  Future<int> updateListaCompra(ListaCompra listaCompra) async {
+    return await dbHelper.update(tableName, listaCompra.toMap(), listaCompra.id!);
   }
 
-  deleteItemListacompra(int id) async {
-    _db.delete("ListaCompra", where: "id=?", whereArgs: [id]);
+  Future<int> deleteListaCompra(int id) async {
+    return await dbHelper.delete(tableName, id);
   }
 }

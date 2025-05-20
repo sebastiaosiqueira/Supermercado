@@ -1,36 +1,34 @@
- import 'package:mercado/models/supermercado.dart';
-import 'package:sqflite/sqflite.dart';
+import '../Database/databasehelper.dart';
+import '../models/supermercado.dart';
 
-class Supermercadorepository {
- late Database _db;
- Future<List<Supermercado>> getAll() async {
-    var res = await _db.query("supermercado");
-    List<Supermercado> list =
-        res.isNotEmpty ? res.map((c) => Supermercado.fromJson(c)).toList() : [];
-    return list;
+class MercadoRepository {
+  final dbHelper = DatabaseHelper();
+  final String tableName = 'mercados';
+
+  Future<int> insertMercado(Mercado mercado) async {
+    return await dbHelper.insert(tableName, mercado.toMap());
   }
 
-  newProduto(Supermercado newSupermercado) async {
-    var res = await _db.insert("produto", newSupermercado.toJson());
-    return res;
+  Future<List<Mercado>> getAllMercados() async {
+    final List<Map<String, dynamic>> maps = await dbHelper.queryAll(tableName);
+    return List.generate(maps.length, (i) {
+      return Mercado.fromMap(maps[i]);
+    });
   }
 
-  getProduto(int id) async {
-    var res = await _db.query("Supermercado", where: "id=?", whereArgs: [id]);
-    return res.isNotEmpty ? Supermercado.fromJson(res.first) : Null;
+  Future<Mercado?> getMercado(int id) async {
+    final List<Map<String, dynamic>> result = await dbHelper.queryById(tableName, id);
+    if (result.isNotEmpty) {
+      return Mercado.fromMap(result.first);
+    }
+    return null;
   }
 
-  updateProduto(Supermercado supermercado) async {
-    var res = await _db.update(
-      "Supermercado",
-      supermercado.toJson(),
-      where: "id= ?",
-      whereArgs: [supermercado.id],
-    );
-    return res;
+  Future<int> updateMercado(Mercado mercado) async {
+    return await dbHelper.update(tableName, mercado.toMap(), mercado.id!);
   }
 
-  deleteProduto(int id) async {
-    _db.delete("Supermercado", where: "id=?", whereArgs: [id]);
+  Future<int> deleteMercado(int id) async {
+    return await dbHelper.delete(tableName, id);
   }
 }

@@ -1,30 +1,24 @@
-import 'package:mercado/models/supermercado.dart';
 
 class Compra {
-  late int id;
-  late Supermercado supermercado;
-  late DateTime datacompra;
+  int? id;
+  DateTime data;
+  int idMercado;
 
-  Compra({required this.id, required this.supermercado, required datacompra});
+  Compra({this.id, required this.data, required this.idMercado});
 
-  Compra.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    supermercado = json['supermercado'];
-
-    supermercado =
-        (json['supermercado'] != null
-            ? new Supermercado.fromJson(json['supermercado'])
-            : null)!;
-    datacompra = json['datacompra'];
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'data': data.toIso8601String(),
+      'idmercado': idMercado,
+    };
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = id;
-    if (this.supermercado != null) {
-      data['supermercado'] = this.supermercado.toJson();
-    }
-    data['datacompra'] = datacompra;
-    return data;
+  factory Compra.fromMap(Map<String, dynamic> map) {
+    return Compra(
+      id: map['id'],
+      data: DateTime.parse(map['data']),
+      idMercado: map['idmercado'],
+    );
   }
 }

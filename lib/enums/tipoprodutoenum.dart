@@ -1,4 +1,4 @@
-enum TipoProduto {
+enum TipoProdutoEnum {
   alimentos,
   frios,
   higiene,
@@ -7,25 +7,25 @@ enum TipoProduto {
 
   String get nomeAmigavel {
     switch (this) {
-      case TipoProduto.alimentos:
+      case TipoProdutoEnum.alimentos:
         return 'Alimentos';
-      case TipoProduto.frios:
+      case TipoProdutoEnum.frios:
         return 'Frios';
-      case TipoProduto.higiene:
+      case TipoProdutoEnum.higiene:
         return 'Higiene';
-      case TipoProduto.limpeza:
+      case TipoProdutoEnum.limpeza:
         return 'Limpeza';
-      case TipoProduto.outros:
+      case TipoProdutoEnum.outros:
         return 'Outros';
       default:
         return name; // Retorna o nome da enumeração como fallback
     }
   }
-  static TipoProduto fromString(String? tipoStr) {
-    if (tipoStr == null) return TipoProduto.outros; // Valor padrão
-    return TipoProduto.values.firstWhere(
+  static TipoProdutoEnum fromString(String? tipoStr) {
+    if (tipoStr == null) return TipoProdutoEnum.outros; // Valor padrão
+    return TipoProdutoEnum.values.firstWhere(
       (e) => e.name == tipoStr,
-      orElse: () => TipoProduto.outros, // Valor padrão se não encontrar
+      orElse: () => TipoProdutoEnum.outros, // Valor padrão se não encontrar
     );
   }
 }

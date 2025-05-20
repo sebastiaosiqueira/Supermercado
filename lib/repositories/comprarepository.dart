@@ -1,37 +1,35 @@
-import 'package:mercado/models/compra.dart';
-import 'package:sqflite/sqflite.dart';
+import '../Database/databasehelper.dart';
+import '../models/compra.dart';
 
-class Comprarepository {
-  late Database _db;
 
-  Future<List<Compra>> getAll() async {
-    var res = await _db.query("compra");
-    List<Compra> list =
-        res.isNotEmpty ? res.map((c) => Compra.fromJson(c)).toList() : [];
-    return list;
+class CompraRepository {
+  final dbHelper = DatabaseHelper();
+  final String tableName = 'compras';
+
+  Future<int> insertCompra(Compra compra) async {
+    return await dbHelper.insert(tableName, compra.toMap());
   }
 
-  newCompra(Compra newCompra) async {
-    var res = await _db.insert("produto", newCompra.toJson());
-    return res;
+  Future<List<Compra>> getAllCompras() async {
+    final List<Map<String, dynamic>> maps = await dbHelper.queryAll(tableName);
+    return List.generate(maps.length, (i) {
+      return Compra.fromMap(maps[i]);
+    });
   }
 
-  getCompra(int id) async {
-    var res = await _db.query("Compra", where: "id=?", whereArgs: [id]);
-    return res.isNotEmpty ? Compra.fromJson(res.first) : Null;
+  Future<Compra?> getCompra(int id) async {
+    final List<Map<String, dynamic>> result = await dbHelper.queryById(tableName, id);
+    if (result.isNotEmpty) {
+      return Compra.fromMap(result.first);
+    }
+    return null;
   }
 
-  updateCompra(Compra compra) async {
-    var res = await _db.update(
-      "Compra",
-      compra.toJson(),
-      where: "id= ?",
-      whereArgs: [compra.id],
-    );
-    return res;
+  Future<int> updateCompra(Compra compra) async {
+    return await dbHelper.update(tableName, compra.toMap(), compra.id!);
   }
 
-  deleteCompra(int id) async {
-    _db.delete("Compra", where: "id=?", whereArgs: [id]);
+  Future<int> deleteCompra(int id) async {
+    return await dbHelper.delete(tableName, id);
   }
 }

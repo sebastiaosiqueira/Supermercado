@@ -1,0 +1,124 @@
+import 'package:flutter/material.dart';
+import 'package:mercado/repositories/produtorepository.dart';
+import 'package:mercado/ui/android/pages/Produto/ProdutoCreateUpdateScreen.dart';
+import '../../../../models/produto.dart';
+
+class ProdutoListScreen extends StatefulWidget {
+  @override
+  // ignore: library_private_types_in_public_api
+  _ProdutoListScreenState createState() => _ProdutoListScreenState();
+}
+
+class _ProdutoListScreenState extends State<ProdutoListScreen> {
+  final ProdutoRepository _produtoRepository = ProdutoRepository();
+  late Future<List<Produto>> _produtosFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    
+    _loadProdutos();
+  }
+
+  Future<void> _loadProdutos() async {
+    setState(() {
+      _produtosFuture = _produtoRepository.getAllProdutos();
+    });
+  }
+
+  Future<void> _deleteProduto(int id) async {
+    await _produtoRepository.deleteProduto(id);
+    _loadProdutos();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Lista de Produtos'),
+      ),
+      body: FutureBuilder<List<Produto>>(
+        future: _produtosFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Erro ao carregar produtos: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(child: Text('Nenhum produto cadastrado.'));
+          } else {
+            return ListView.builder(
+              itemCount: snapshot.data!.length,
+              itemBuilder: (context, index) {
+                final produto = snapshot.data![index];
+                return ListTile(
+                  title: Text(produto.descricao),
+                  subtitle: Text(produto.tipo.name),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.edit),
+                        onPressed: () async {
+                          final updated = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProdutoCreateUpdateScreen(produto: produto),
+                            ),
+                          );
+                          if (updated != null && updated) {
+                            _loadProdutos();
+                          }
+                        },
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.delete),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: Text('Confirmar Exclusão'),
+                              content: Text('Deseja realmente excluir "${produto.descricao}"?'),
+                              actions: [
+                                TextButton(
+                                  child: Text('Cancelar'),
+                                  onPressed: () => Navigator.of(context).pop(),
+                                ),
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                                  child: Text('Excluir'),
+                                  onPressed: () {
+                                    _deleteProduto(produto.id!);
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              },
+            );
+          }
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () async {
+          final created = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ProdutoCreateUpdateScreen(),
+            ),
+          );
+          if (created != null && created) {
+            _loadProdutos();
+          }
+        },
+      ),
+    );
+  }
+}

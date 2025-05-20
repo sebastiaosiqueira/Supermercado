@@ -1,20 +1,20 @@
+class Mercado {
+  int? id;
+  String nome;
 
+  Mercado({this.id, required this.nome});
 
-class Supermercado {
-  late int id;
-  late String nome;
-
-  Supermercado({required this.id, required this.nome});
-
-  Supermercado.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    nome = json['nome'];
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'nome': nome,
+    };
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = id;
-    data['nome'] = nome;
-    return data;
+  factory Mercado.fromMap(Map<String, dynamic> map) {
+    return Mercado(
+      id: map['id'],
+      nome: map['nome'],
+    );
   }
 }
