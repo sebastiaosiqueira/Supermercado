@@ -5,13 +5,8 @@ import 'package:flutter/foundation.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart'; // Para kIsWeb
 
 void main() {
-   WidgetsFlutterBinding.ensureInitialized();
-  if (!kIsWeb) {
-   
-    sqfliteFfiInit();
-    databaseFactory = databaseFactoryFfi;
-  }
   runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
     title: 'Navegação Básica',
     theme: ThemeData(primarySwatch: Colors.blue),
     home: Home(),
